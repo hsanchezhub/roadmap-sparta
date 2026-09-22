@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roadmap SPARTA — Fin 2026</title>
+<meta name="description" content="La feuille de route SPARTA jusqu'à la fin 2026. Une carte de campagne que l'on parcourt.">
+<meta name="robots" content="noindex, nofollow">
+<!-- polices servies en local : le préchargement n'apporte rien de plus ici et
+     Chrome le signale comme inutilisé, ce qui encombre la console -->
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --obsidian:#07080A;
+  --ground:#0B0D11;
+  --gold:#D4AF37;
+  --gold-hi:#F2D98B;
+  --gold-deep:#8A6F22;
+  --cream:#EDE6D6;
+  --muted:#8C8779;
+  --tint:#E6BE55;
+  --tint-ink:#F0D48B;
+  --rail-h:clamp(46px,7vh,72px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --ff-seal:'Cinzel',Georgia,'Times New Roman',serif;
+  --ff-map:'Barlow Condensed','Oswald','Arial Narrow',system-ui,sans-serif;
+  --ff-mono:'IBM Plex Mono','SFMono-Regular',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--obsidian)}
+body{
+  background:var(--obsidian);color:var(--cream);
+  font-family:var(--ff-map);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* ---------- scène ---------- */
+#stage{position:fixed;inset:0;z-index:0}
+#stage canvas{display:block;width:100%;height:100%}
+#track{position:relative;width:100%;z-index:1;pointer-events:none}
+
+/* grain statique, sans mix-blend-mode */
+#grain{
+  position:fixed;inset:-2px;z-index:4;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#vignette{
+  position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(130% 95% at 50% 42%,transparent 38%,rgba(4,5,7,.55) 78%,rgba(3,4,6,.92) 100%);
+}
+/* ---------- couche HUD ---------- */
+#hud{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+#leaders{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#leaders line{stroke:var(--tint);stroke-width:1;opacity:.55}
+#leaders circle{fill:none;stroke:var(--tint);stroke-width:1;opacity:.75}
+
+/* ---------- étiquettes ancrées ---------- */
+.lbl{
+  position:absolute;top:0;left:0;width:clamp(200px,17.5vw,330px);
+  will-change:transform,opacity;opacity:0;
+  border-left:1px solid var(--tint);
+  padding:2px 0 4px 14px;
+}
+.lbl.right{border-left:none;border-right:1px solid var(--tint);padding:2px 14px 4px 0;text-align:right}
+.lbl .d{
+  font-family:var(--ff-mono);font-size:clamp(10px,1.05vw,13px);font-weight:400;
+  letter-spacing:.24em;color:var(--tint-ink);white-space:nowrap;
+}
+.lbl .t{
+  font-family:var(--ff-map);font-weight:600;
+  font-size:clamp(20px,2.6vw,38px);line-height:.96;letter-spacing:.005em;
+  text-transform:uppercase;color:var(--cream);margin-top:.28em;
+  text-shadow:0 2px 26px rgba(3,4,6,.95),0 0 2px rgba(3,4,6,.9);
+}
+.lbl .s{
+  font-family:var(--ff-mono);font-size:clamp(9px,.95vw,12px);letter-spacing:.3em;
+  color:var(--muted);margin-top:.7em;text-transform:uppercase;
+}
+.lbl .rule{height:1px;background:linear-gradient(90deg,var(--tint),transparent);margin-top:.62em;
+  opacity:.5;transform:scaleX(var(--rv,1));transform-origin:left}
+.lbl.right .rule{background:linear-gradient(270deg,var(--tint),transparent);transform-origin:right}
+
+/* ---------- ouverture ---------- */
+#intro{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1120px,90vw);text-align:center;
+}
+#intro .eyebrow{
+  font-family:var(--ff-mono);font-size:clamp(9px,1vw,12px);letter-spacing:.52em;
+  color:var(--gold);text-transform:uppercase;opacity:0;
+}
+#intro h1{
+  font-family:var(--ff-seal);font-weight:700;
+  font-size:clamp(38px,8.6vw,124px);line-height:1;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--cream);margin:.3em 0 0;
+}
+/* un masque par ligne, en bloc : les hampes de Cinzel respirent et les
+   deux lignes ne se chevauchent pas (pas de marge négative ici) */
+/* Cinzel déborde largement sa boîte de ligne vers le haut : le masque reçoit
+   une réserve en padding, l'interligne est réduit d'autant pour compenser,
+   et l'escamotage se fait en em (pas en %) pour rester sous le masque. */
+#intro h1 .ln{display:block;overflow:hidden;line-height:.60;padding:.45em 0 .09em}
+#intro h1 .ln i{display:block;font-style:normal;transform:translateY(1.3em)}
+#intro .yr{display:block;color:var(--gold);font-size:.58em;letter-spacing:.2em;margin-top:.1em;opacity:0}
+#intro .sub{
+  font-family:var(--ff-map);font-weight:300;font-size:clamp(13px,1.6vw,19px);
+  letter-spacing:.16em;color:var(--muted);text-transform:uppercase;
+  margin-top:1.5em;opacity:0;
+}
+#intro .hint{
+  font-family:var(--ff-mono);font-size:11px;letter-spacing:.34em;color:var(--gold);
+  text-transform:uppercase;margin-top:3.4em;opacity:0;
+}
+#intro .hint b{display:block;width:1px;height:52px;margin:16px auto 0;font-weight:400;
+  background:linear-gradient(180deg,var(--gold),transparent);transform-origin:top}
+
+/* ---------- bascule de mois ---------- */
+#slam{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;opacity:0;width:100%;
+}
+#slam .m{
+  font-family:var(--ff-seal);font-weight:800;
+  font-size:clamp(44px,11.5vw,168px);line-height:1;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--tint);text-indent:.22em;
+}
+#slam .n{
+  font-family:var(--ff-mono);font-size:clamp(9px,1vw,12px);letter-spacing:.5em;
+  color:var(--cream);opacity:.62;text-transform:uppercase;margin-top:1.1em;
+}
+#slam .bar{height:1px;width:0;background:var(--tint);margin:1.5em auto 0;opacity:.8}
+
+/* ---------- règle de campagne ---------- */
+#rail{
+  position:absolute;left:50%;transform:translateX(-50%);
+  bottom:calc(20px + var(--safe-b));
+  width:min(880px,84vw);opacity:0;
+}
+#rail .bar{position:relative;height:1px;background:rgba(237,230,214,.16)}
+#rail .fill{position:absolute;left:0;top:0;height:1px;width:100%;background:var(--tint);
+  transform:scaleX(0);transform-origin:left;will-change:transform}
+#rail .cursor{
+  position:absolute;top:50%;left:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;
+  border:1px solid var(--tint);transform:rotate(45deg);background:var(--obsidian);
+}
+#rail .cursor::after{content:'';position:absolute;inset:2px;background:var(--tint)}
+#rail .months{position:relative;height:15px;margin-top:11px}
+#rail .mo{
+  position:absolute;top:0;font-family:var(--ff-mono);font-size:10px;letter-spacing:.3em;
+  color:rgba(237,230,214,.3);text-transform:uppercase;white-space:nowrap;
+  transition:color .45s ease;
+}
+#rail .mo.on{color:var(--tint-ink)}
+#rail .ticks{position:absolute;inset:0}
+#rail .tk{position:absolute;top:-3px;width:1px;height:7px;background:rgba(237,230,214,.22)}
+#rail .tk.on{background:var(--tint)}
+
+/* ---------- clôture ---------- */
+#outro{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1000px,88vw);text-align:center;opacity:0;
+}
+#outro .k{
+  font-family:var(--ff-mono);font-size:clamp(9px,1vw,12px);letter-spacing:.5em;
+  color:var(--gold);text-transform:uppercase;
+}
+#outro h2{
+  font-family:var(--ff-seal);font-weight:700;font-size:clamp(34px,7.4vw,104px);
+  line-height:.98;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);margin:.42em 0 0;
+  text-shadow:0 4px 60px rgba(3,4,6,.96),0 0 14px rgba(3,4,6,.8);
+}
+#outro .k,#outro .l,#outro .count{text-shadow:0 2px 34px rgba(3,4,6,.95)}
+#outro h2 em{font-style:normal;color:var(--gold)}
+#outro .l{
+  font-family:var(--ff-map);font-weight:300;font-size:clamp(13px,1.6vw,19px);
+  letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:1.7em;
+}
+#outro .count{
+  display:flex;justify-content:center;gap:clamp(22px,5vw,64px);margin-top:2.6em;
+  font-family:var(--ff-mono);
+}
+#outro .count div{text-align:center}
+#outro .count b{display:block;font-family:var(--ff-seal);font-weight:700;
+  font-size:clamp(26px,4vw,52px);color:var(--gold);letter-spacing:.04em}
+#outro .count span{display:block;font-size:10px;letter-spacing:.3em;color:var(--muted);
+  text-transform:uppercase;margin-top:.7em}
+
+/* ---------- préchargement ---------- */
+#boot{
+  position:fixed;inset:0;z-index:20;background:var(--obsidian);
+  display:grid;place-items:center;transition:opacity .7s ease;
+}
+#boot .r{width:min(240px,50vw);height:1px;background:rgba(237,230,214,.14);position:relative}
+#boot .r i{position:absolute;inset:0;width:0;background:var(--gold);display:block}
+#boot.gone{opacity:0;pointer-events:none}
+
+@media (max-width:760px){
+  .lbl{width:min(23ch,54vw)}
+  .lbl .t{font-size:clamp(19px,5.4vw,30px)}
+  #rail{width:86vw}
+  #rail .mo{font-size:9px;letter-spacing:.18em}
+  #intro,#outro{width:88vw}
+  #intro .sub{letter-spacing:.1em}
+  #slam .m{letter-spacing:.14em;text-indent:.14em}
+}
+/* gouttière : aucun bloc de texte ne touche le bord de l'écran */
+#intro,#outro,#slam{padding-left:16px;padding-right:16px}
+@media (prefers-reduced-motion:reduce){
+  #intro .hint b{animation:none !important}
+}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <svg id="leaders" aria-hidden="true"></svg>
+  <div id="intro">
+    <p class="eyebrow">Feuille de route · Campagne 2026</p>
+    <h1><span class="ln"><i>Roadmap</i></span><span class="ln"><i>Sparta</i></span><span class="yr">Fin 2026</span></h1>
+    <p class="sub">Quatre mois. Douze rendez-vous. Une seule ligne.</p>
+    <p class="hint">Avancer<b></b></p>
+  </div>
+  <div id="slam" aria-hidden="true">
+    <div class="m"></div>
+    <div class="n"></div>
+    <div class="bar"></div>
+  </div>
+  <div id="outro">
+    <p class="k">Terminus de la campagne</p>
+    <h2>On se retrouve<br>en <em>2027</em></h2>
+    <p class="l">La route est tracée. Reste à la marcher.</p>
+    <div class="count">
+      <div><b>4</b><span>Mois</span></div>
+      <div><b>12</b><span>Rendez-vous</span></div>
+      <div><b>1</b><span>Cap</span></div>
+    </div>
+  </div>
+  <div id="rail">
+    <div class="bar"><div class="fill"></div><div class="ticks"></div><div class="cursor"></div></div>
+    <div class="months"></div>
+  </div>
+</div>
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="track"></div>
+<div id="boot"><div class="r"><i></i></div></div>
+
+<script src="./vendor/gsap.min.js"></script>
+<script src="./vendor/ScrollTrigger.min.js"></script>
+<script src="./vendor/lenis.min.js"></script>
+<script type="importmap">
+{"imports":{"three":"./vendor/three.module.min.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+/* ==========================================================================
+   ROADMAP SPARTA — FIN 2026        DA « Table de sable »
+   Le scroll ne fait pas défiler la page : il fait avancer la caméra
+   le long d'une route tracée sur une carte de campagne en relief.
+   ========================================================================== */
+
+const QS       = new URLSearchParams(location.search);
+const FLAT     = QS.has('flat');                     // ?flat=0.35 → rendu figé à 35 %
+const FLAT_AT  = (() => { const v = parseFloat(QS.get('flat')); return isNaN(v) ? 0.5 : v; })();
+const REDUCED  = QS.has('reduced') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BENCH    = QS.has('bench');                    // ?bench → mesure de cadence
+const AUDIT    = QS.has('audit');                    // ?audit → chasse aux textes coupés
+// Un mobile milieu de gamme ne doit pas payer le relief du bureau : on divise
+// la densité du maillage et des particules plutôt que de rogner la netteté.
+const SMALL    = innerWidth < 860 || matchMedia('(pointer: coarse)').matches;
+
+/* -------------------------------------------------------------- le contenu */
+const MONTHS = [
+  { name:'Septembre', short:'Sep', tint:0xE6BE55, fog:0x0B0A08, weather:'poussiere',
+    events:[
+      { d:'24',              t:'Sparta Awards' },
+      { d:'25 → 28',         t:'Legacy Camp' },
+    ]},
+  { name:'Octobre',   short:'Oct', tint:0xB98338, fog:0x0A0908, weather:'feuilles',
+    events:[
+      { d:'05 · 07 · 08',    t:'Event portes ouvertes' },
+      { d:'23 → 24',         t:'Sparta Core',   s:'Édition 2027' },
+      { d:'25',              t:'SuperSunday',   s:'Lyon' },
+    ]},
+  { name:'Novembre',  short:'Nov', tint:0x7E93A6, fog:0x070A0D, weather:'vent',
+    events:[
+      { d:'01',              t:'Event Online' },
+      { d:'09 · 11 · 13 · 15', t:'Mindset Bootcamp' },
+      { d:'27 → 30',         t:'Winter Arc Challenge' },
+    ]},
+  { name:'Décembre',  short:'Déc', tint:0xBFD8E6, fog:0x080B0E, weather:'neige',
+    events:[
+      { d:'01 → 06',         t:'Bootcamp' },
+      { d:'14 → 20',         t:'House Story' },
+      { d:'20',              t:'Repas de Noël', s:'Par ville' },
+      { d:'29',              t:'Call 2027' },
+    ]},
+];
+
+/* ------------------------------------------------- séquence des stations */
+// Une station = un temps d'arrêt sur la route. Poids = longueur relative.
+const STATIONS = [{ kind:'intro', w:1.55 }];
+MONTHS.forEach((mo, mi) => {
+  STATIONS.push({ kind:'gate', month:mi, w:1.25 });
+  mo.events.forEach((ev, ei) => STATIONS.push({ kind:'event', month:mi, index:ei, ev, w:1 }));
+});
+STATIONS.push({ kind:'outro', w:1.9 });
+
+const N = STATIONS.length;
+
+/* ==========================================================================
+   1. LA ROUTE
+   ========================================================================== */
+const SPAN = 17;
+const ctrl = [];
+{
+  let z = 0;
+  for (let i = 0; i < N; i++) {
+    if (i > 0) z -= SPAN * STATIONS[i].w;
+    const x = Math.sin(i * 0.62) * 15
+            + Math.sin(i * 0.27 + 1.9) * 8.5
+            + Math.sin(i * 1.13 + 0.4) * 3.2;
+    ctrl.push(new THREE.Vector3(x, 0, z));
+  }
+}
+const CURVE = new THREE.CatmullRomCurve3(ctrl, false, 'centripetal', 0.5);
+
+// abscisse curviligne de chaque station (u ∈ [0,1], vitesse constante)
+const DIV = 24;
+const LENS = CURVE.getLengths(DIV * (N - 1));
+const TOTAL_LEN = LENS[LENS.length - 1];
+STATIONS.forEach((st, i) => { st.u = LENS[i * DIV] / TOTAL_LEN; });
+
+const Z_MIN = ctrl[N - 1].z, Z_MAX = ctrl[0].z;
+
+/* ==========================================================================
+   2. SCÈNE
+   ========================================================================== */
+const host = document.getElementById('stage');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(46, innerWidth / innerHeight, 1, 1400);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.32;
+renderer.shadowMap.enabled = false;            // aucune ombre : émissif + halos additifs
+host.appendChild(renderer.domElement);
+
+// DPR par paliers — on part haut puis on redescend si ça rame (jamais l'inverse)
+const DPR_TIERS = SMALL ? [1.9, 1.6, 1.3, 1.05] : [2, 1.7, 1.4, 1.15];
+let dprIdx = 0;
+const applyDPR = () => renderer.setPixelRatio(Math.min(devicePixelRatio || 1, DPR_TIERS[dprIdx]));
+applyDPR();
+
+/* ---------- ambiance, pilotée par le mois courant ---------- */
+const AMB = {
+  tint : new THREE.Color(MONTHS[0].tint),
+  fog  : new THREE.Color(MONTHS[0].fog),
+};
+// Le fond de scène (scene.background) ne traverse PAS le tone mapping, alors
+// que le relief, lui, y passe : les deux noirs ne coïncident donc jamais tout à
+// fait et le bord de la carte reste visible. On peint donc le fond avec un dôme
+// rendu comme le reste, qui subit exactement la même conversion.
+scene.background = null;
+
+/* ==========================================================================
+   3. LE RELIEF — carte en courbes de niveau, aplanie sous la route
+   ========================================================================== */
+function hash2(x, y){ const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123; return s - Math.floor(s); }
+function vnoise(x, y){
+  const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+  const u = xf*xf*(3-2*xf), v = yf*yf*(3-2*yf);
+  const a = hash2(xi,yi), b = hash2(xi+1,yi), c = hash2(xi,yi+1), d = hash2(xi+1,yi+1);
+  return (a*(1-u)+b*u)*(1-v) + (c*(1-u)+d*u)*v;
+}
+function fbm(x, y){
+  let s = 0, a = .5, f = 1;
+  for (let i = 0; i < 5; i++){ s += a * vnoise(x*f, y*f); f *= 2.03; a *= .5; }
+  return s;
+}
+const smoothstep = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x-e0)/(e1-e0))); return t*t*(3-2*t); };
+
+const TW = 300, TD = 520, TCZ = (Z_MAX + Z_MIN) * 0.5;
+const terrainGeo = new THREE.PlaneGeometry(TW, TD, SMALL ? 112 : 190, SMALL ? 224 : 380);
+terrainGeo.rotateX(-Math.PI / 2);
+terrainGeo.translate(0, 0, TCZ);
+{
+  // échantillons de la route pour mesurer la distance au corridor
+  const S = 220, sx = new Float32Array(S+1), sz = new Float32Array(S+1);
+  for (let i = 0; i <= S; i++){ const p = CURVE.getPointAt(i/S); sx[i] = p.x; sz[i] = p.z; }
+
+  const pos = terrainGeo.attributes.position;
+  const openAttr = new Float32Array(pos.count);
+  const CORRIDOR = 12, FEATHER = 30;
+  for (let i = 0; i < pos.count; i++){
+    const x = pos.getX(i), z = pos.getZ(i);
+    let best = 1e9;
+    for (let j = 0; j <= S; j++){
+      const dx = x - sx[j], dz = z - sz[j];
+      const d = dx*dx + dz*dz;
+      if (d < best) best = d;
+    }
+    const dist = Math.sqrt(best);
+    const open = smoothstep(CORRIDOR, CORRIDOR + FEATHER, dist);   // 0 sur la route, 1 au loin
+    const far  = smoothstep(30, 150, dist);                        // reliefs lointains plus hauts
+
+    const h = (fbm(x * 0.0125 + 40, z * 0.0125 + 40) - 0.5) * 13.5 * (0.45 + 1.55 * far)
+            + (fbm(x * 0.048, z * 0.048) - 0.5) * 2.4;
+    pos.setY(i, h * open);
+    openAttr[i] = open;
+  }
+  pos.needsUpdate = true;
+  terrainGeo.setAttribute('aOpen', new THREE.BufferAttribute(openAttr, 1));
+  terrainGeo.computeVertexNormals();
+}
+
+const terrainUni = {
+  uTint:{ value:AMB.tint.clone() }, uFog:{ value:AMB.fog.clone() },
+  uHead:{ value:new THREE.Vector3() },
+  uDeep:{ value:new THREE.Color(0x0B0E13) }, uBase:{ value:new THREE.Color(0x242C37) },
+  uFogNear:{ value:70 }, uFogFar:{ value:345 }, uTime:{ value:0 },
+  uHalf:{ value:new THREE.Vector2(TW * 0.5, TD * 0.5) },
+  uCenter:{ value:new THREE.Vector2(0, TCZ) },
+};
+const terrain = new THREE.Mesh(terrainGeo, new THREE.ShaderMaterial({
+  uniforms: terrainUni,
+  vertexShader:/* glsl */`
+    attribute float aOpen;
+    varying vec3 vW; varying vec3 vN; varying float vH; varying float vOpen;
+    void main(){
+      vec4 wp = modelMatrix * vec4(position, 1.0);
+      vW = wp.xyz; vH = position.y; vOpen = aOpen;
+      vN = normalize(mat3(modelMatrix) * normal);
+      gl_Position = projectionMatrix * viewMatrix * wp;
+    }`,
+  fragmentShader:/* glsl */`
+    precision highp float;
+    uniform vec3 uTint, uFog, uHead, uDeep, uBase;
+    uniform float uFogNear, uFogFar, uTime;
+    uniform vec2 uHalf, uCenter;
+    varying vec3 vW; varying vec3 vN; varying float vH; varying float vOpen;
+
+    float lineMask(float v, float width){
+      float fw = max(fwidth(v), 1e-5);
+      float d  = abs(fract(v - 0.5) - 0.5);
+      return 1.0 - smoothstep(0.0, fw * width, d);
+    }
+    void main(){
+      // bassin de lumière autour du point où l'on se trouve
+      float pool = pow(1.0 - smoothstep(0.0, 135.0, distance(vW.xz, uHead.xz)), 1.9);
+
+      // courbes de niveau + index tous les 5
+      float cv    = vH * 0.62;
+      float minor = lineMask(cv, 1.25);
+      float major = lineMask(cv * 0.2, 1.4);
+
+      // quadrillage cartographique
+      vec2 g  = vW.xz / 18.0;
+      vec2 gd = abs(fract(g - 0.5) - 0.5) / fwidth(g);
+      float grid = 1.0 - min(min(gd.x, gd.y), 1.0);
+
+      // le corridor dégagé n'a pas de courbes de niveau : il n'a pas de pente
+      float relief = smoothstep(0.03, 0.30, vOpen);
+
+      vec3 col = mix(uDeep, uBase, smoothstep(-6.0, 9.0, vH));
+      float lam = clamp(dot(normalize(vN), normalize(vec3(-0.38, 0.86, 0.34))), 0.0, 1.0);
+      col *= 0.62 + 0.55 * lam;
+
+      col += uTint * minor * relief * (0.175 + 0.50 * pool);
+      col += uTint * major * relief * (0.300 + 0.78 * pool);
+      col += uTint * grid  * (0.028 + 0.10 * pool);
+      col += uTint * pool  * 0.045;
+
+      float fogF = smoothstep(uFogNear, uFogFar, distance(vW, cameraPosition));
+      col = mix(col, uFog, fogF);
+
+      // fondu sur les bords de la carte : vue de haut, la dalle ne doit pas se voir
+      // produit plutôt que minimum : les coins s'arrondissent au lieu de rester droits
+      float ex = 1.0 - smoothstep(uHalf.x * 0.34, uHalf.x * 0.97, abs(vW.x - uCenter.x));
+      float ez = 1.0 - smoothstep(uHalf.y * 0.46, uHalf.y * 0.97, abs(vW.z - uCenter.y));
+      col = mix(uFog, col, ex * ez);
+
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+}));
+terrain.frustumCulled = false;
+scene.add(terrain);
+
+const sky = new THREE.Mesh(
+  new THREE.SphereGeometry(1250, 20, 14),
+  new THREE.MeshBasicMaterial({ color:AMB.fog.clone(), side:THREE.BackSide, depthWrite:false })
+);
+sky.position.set(0, 0, TCZ);
+sky.renderOrder = -1;
+sky.frustumCulled = false;
+scene.add(sky);
+
+/* ==========================================================================
+   4. LA ROUTE TRACÉE — pointillés devant, or plein derrière
+   ========================================================================== */
+const UP = new THREE.Vector3(0, 1, 0);
+function ribbon(width, y, samples){
+  const g = new THREE.BufferGeometry();
+  const P = new Float32Array((samples + 1) * 2 * 3);
+  const U = new Float32Array((samples + 1) * 2 * 2);
+  const idx = [];
+  const side = new THREE.Vector3();
+  for (let i = 0; i <= samples; i++){
+    const u = i / samples;
+    const p = CURVE.getPointAt(u);
+    const t = CURVE.getTangentAt(u);
+    side.crossVectors(t, UP).normalize().multiplyScalar(width * 0.5);
+    const a = i * 6, b = i * 4;
+    P[a  ] = p.x - side.x; P[a+1] = y; P[a+2] = p.z - side.z;
+    P[a+3] = p.x + side.x; P[a+4] = y; P[a+5] = p.z + side.z;
+    U[b  ] = u; U[b+1] = 0; U[b+2] = u; U[b+3] = 1;
+    if (i < samples){ const v = i * 2; idx.push(v, v+1, v+2, v+1, v+3, v+2); }
+  }
+  g.setAttribute('position', new THREE.BufferAttribute(P, 3));
+  g.setAttribute('uv', new THREE.BufferAttribute(U, 2));
+  g.setIndex(idx);
+  return g;
+}
+
+const routeUni = {
+  uProg:{ value:0 }, uTime:{ value:0 },
+  uGold:{ value:new THREE.Color(0xD4AF37) },
+  uGoldHi:{ value:new THREE.Color(0xF7E5AE) },
+  uTint:{ value:AMB.tint.clone() },
+  uWide:{ value:0 },
+};
+const routeMat = new THREE.ShaderMaterial({
+  uniforms: routeUni, transparent:true, depthWrite:false,
+  blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+  vertexShader:/* glsl */`
+    varying vec2 vUv;
+    void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+  fragmentShader:/* glsl */`
+    precision highp float;
+    uniform float uProg, uTime, uWide;
+    uniform vec3 uGold, uGoldHi, uTint;
+    varying vec2 vUv;
+    void main(){
+      float across  = abs(vUv.y - 0.5) * 2.0;
+      float body    = 1.0 - smoothstep(0.42, 1.0, across);
+      float core    = 1.0 - smoothstep(0.0, 0.40, across);
+      float visited = smoothstep(uProg + 0.0016, uProg - 0.0016, vUv.x);
+      // le plan est en pointillés ; quand ils deviennent sous-pixel au loin,
+      // on les fond en trait continu sinon ça crénèle en escalier
+      float dfreq = 95.0;
+      float dw    = clamp(fwidth(vUv.x) * dfreq * 2.4, 0.0, 1.0);
+      float dash  = mix(step(0.44, fract(vUv.x * dfreq - uTime * 0.012)), 0.5, dw);
+      float head  = exp(-pow((vUv.x - uProg) * 760.0, 2.0));
+
+      vec3 col = mix(uTint * 0.55, uGold * 0.88, visited);
+      col += uGoldHi * core * visited * 0.22;
+      col += uGoldHi * head * 0.70 * (1.0 - uWide);
+
+      // devant : un trait fin en pointillés (le plan). derrière : la route pleine.
+      float aFuture = core * dash * 0.52;
+      float aPast   = body * (0.30 + 0.52 * core);
+      float a = mix(aFuture, aPast, visited);
+      a  = clamp(a + head * 0.38 * (1.0 - uWide), 0.0, 1.0);
+      a *= mix(1.0, 0.075, uWide);
+      if (a < 0.004) discard;
+      gl_FragColor = vec4(col, a);
+    }`,
+});
+const route = new THREE.Mesh(ribbon(2.5, 0.26, 1000), routeMat);
+route.frustumCulled = false; route.renderOrder = 6; scene.add(route);
+
+// nappe large sous la route : fait respirer l'or sans post-traitement
+const glowMat = routeMat.clone();
+glowMat.uniforms = THREE.UniformsUtils.clone(routeUni);
+glowMat.uniforms.uWide.value = 1;
+const routeGlow = new THREE.Mesh(ribbon(11, 0.2, 500), glowMat);
+routeGlow.frustumCulled = false; routeGlow.renderOrder = 5; scene.add(routeGlow);
+
+/* ==========================================================================
+   5. TEXTE AU SOL — les mois gravés sur la carte
+   ========================================================================== */
+function mesureEspacee(ctx, text, spacing){
+  let total = 0;
+  for (const c of text) total += ctx.measureText(c).width + spacing;
+  return total - spacing;
+}
+function spacedText(ctx, text, cx, cy, spacing){
+  const total = mesureEspacee(ctx, text, spacing);
+  let x = cx - total / 2;
+  for (const c of text){ ctx.fillText(c, x, cy); x += ctx.measureText(c).width + spacing; }
+  return total;
+}
+function groundLabel(text, { world = 34, weight = 600, size = 190, family, color,
+                             spacing = 0.30, alpha = 0.46 }){
+  const W = 2048, H = 420, cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = color;
+
+  // Filet de sécurité : si la police tracée n'est pas celle qu'on croit (repli
+  // encore actif), le mot déborde de sa propre texture et se retrouve coupé.
+  // On mesure, et on réduit le corps juste ce qu'il faut pour qu'il tienne.
+  const LIMITE = W * 0.86;
+  let px = size;
+  for (let i = 0; i < 8; i++){
+    ctx.font = `${weight} ${px}px ${family}`;
+    const t = mesureEspacee(ctx, text, px * spacing);
+    if (t <= LIMITE) break;
+    px *= LIMITE / t;
+  }
+  ctx.font = `${weight} ${px}px ${family}`;
+  const dessine = spacedText(ctx, text, W / 2, H / 2, px * spacing);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const geo = new THREE.PlaneGeometry(world, world * H / W);
+  geo.rotateX(-Math.PI / 2);
+  const mat = new THREE.MeshBasicMaterial({
+    map:tex, transparent:true, opacity:0, depthWrite:false,
+    blending:THREE.AdditiveBlending,
+  });
+  const m = new THREE.Mesh(geo, mat);
+  m.userData.maxAlpha  = alpha;
+  m.userData.halfWidth = world * 0.5;
+  m.userData.textRatio = dessine / W;   // le mot n'occupe pas tout le plan
+  m.renderOrder = 3;
+  return m;
+}
+
+/* ==========================================================================
+   6. JALONS & PORTIQUES
+   ========================================================================== */
+function radialTex(){
+  const s = 256, cv = document.createElement('canvas'); cv.width = cv.height = s;
+  const c = cv.getContext('2d');
+  const g = c.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+  g.addColorStop(0,   'rgba(255,244,214,1)');
+  g.addColorStop(.16, 'rgba(247,229,174,.52)');
+  g.addColorStop(.44, 'rgba(212,175,55,.14)');
+  g.addColorStop(1,   'rgba(212,175,55,0)');
+  c.fillStyle = g; c.fillRect(0, 0, s, s);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const HALO = radialTex();
+const GOLD    = new THREE.Color(0xD4AF37);
+const GOLD_HI = new THREE.Color(0xF7E5AE);
+
+const setOp = (m, v) => { if (m.uniforms && m.uniforms.uOpacity) m.uniforms.uOpacity.value = v; else m.opacity = v; };
+
+const frame = (st) => {
+  const p = CURVE.getPointAt(st.u);
+  const t = CURVE.getTangentAt(st.u);
+  const n = new THREE.Vector3().crossVectors(t, UP).normalize();
+  return { p, t, n, yaw: Math.atan2(-t.x, -t.z) };
+};
+
+const markers = [];
+function buildMarker(st, side){
+  const { p, n, yaw } = frame(st);
+  const g = new THREE.Group();
+  g.position.copy(p).addScaledVector(n, side * 5.4);
+  g.rotation.y = yaw;
+
+  const riser = new THREE.Group(); g.add(riser);
+
+  const poleMat = new THREE.MeshBasicMaterial({ color:GOLD, transparent:true, opacity:0 });
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.2, 9.6, 6), poleMat);
+  pole.position.y = 4.8; riser.add(pole);
+
+  const crownMat = new THREE.MeshBasicMaterial({ color:GOLD_HI, transparent:true, opacity:0,
+                                                 wireframe:true });
+  const crown = new THREE.Mesh(new THREE.OctahedronGeometry(0.62), crownMat);
+  crown.position.y = 10.0; riser.add(crown);
+
+  const ringMat = new THREE.MeshBasicMaterial({ color:GOLD, transparent:true, opacity:0,
+                                                side:THREE.DoubleSide, depthWrite:false,
+                                                blending:THREE.AdditiveBlending });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.45, 1.58, 56), ringMat);
+  ring.rotation.x = -Math.PI/2; ring.position.y = 0.16; ring.renderOrder = 4; g.add(ring);
+
+  const haloMat = new THREE.SpriteMaterial({ map:HALO, transparent:true, opacity:0,
+                                             depthWrite:false, blending:THREE.AdditiveBlending });
+  const halo = new THREE.Sprite(haloMat); halo.scale.set(5, 5, 1); g.add(halo);
+
+  scene.add(g);
+  const m = { st, g, riser, ring, halo, side, world:g.position.clone(),
+              mats:[poleMat, crownMat, ringMat, haloMat], crown, k:0 };
+  markers.push(m);
+  return m;
+}
+
+const gates = [];
+function buildGate(st, mi){
+  const { p, n, t, yaw } = frame(st);
+  const g = new THREE.Group(); g.position.copy(p); g.rotation.y = yaw;
+  const tint = new THREE.Color(MONTHS[mi].tint);
+
+  const OB_H = 12.5;
+  const obMat = new THREE.ShaderMaterial({
+    uniforms:{ uTint:{ value:tint.clone() }, uOpacity:{ value:0 }, uH:{ value:OB_H } },
+    transparent:true,
+    vertexShader:/* glsl */`
+      uniform float uH;
+      varying float vY; varying vec3 vN;
+      void main(){
+        vY = (position.y + uH * 0.5) / uH;
+        vN = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader:/* glsl */`
+      precision highp float;
+      uniform vec3 uTint; uniform float uOpacity;
+      varying float vY; varying vec3 vN;
+      void main(){
+        float facet = 0.30 + 0.70 * clamp(dot(vN, normalize(vec3(-0.45, 0.30, 0.84))), 0.0, 1.0);
+        vec3 col = mix(vec3(0.020, 0.023, 0.029), uTint, pow(clamp(vY, 0.0, 1.0), 1.85));
+        col *= facet;
+        col += uTint * pow(clamp(vY, 0.0, 1.0), 9.0) * 0.32;   // l'arête haute capte la lumière
+        gl_FragColor = vec4(col, uOpacity);
+      }`,
+  });
+  for (const s of [-1, 1]){
+    const ob = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.82, OB_H, 4), obMat);
+    ob.position.set(s * 8.6, OB_H * 0.5, 0); ob.rotation.y = Math.PI / 4; g.add(ob);
+  }
+  // la limite de mois se lit comme une frontière sur une carte :
+  // un long trait discontinu qui déborde largement de la route
+  const bandMat = new THREE.ShaderMaterial({
+    uniforms:{ uTint:{ value:tint.clone() }, uOpacity:{ value:0 } },
+    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.DoubleSide,
+    vertexShader:'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader:/* glsl */`
+      precision highp float;
+      uniform vec3 uTint; uniform float uOpacity;
+      varying vec2 vUv;
+      void main(){
+        float dash = step(0.38, fract(vUv.x * 74.0));
+        float fade = 1.0 - smoothstep(0.30, 0.5, abs(vUv.x - 0.5));  // s'éteint aux extrémités
+        float thin = 1.0 - smoothstep(0.25, 0.5, abs(vUv.y - 0.5));
+        float a = dash * fade * thin * uOpacity;
+        if (a < 0.004) discard;
+        gl_FragColor = vec4(uTint * 0.85, a);
+      }`,
+  });
+  const band = new THREE.Mesh(new THREE.PlaneGeometry(46, 1.1), bandMat);
+  band.rotation.x = -Math.PI/2; band.position.y = 0.2; band.renderOrder = 4; g.add(band);
+
+  // un repère de franchissement au sol, sous la route
+  const arcMat = new THREE.MeshBasicMaterial({ color:tint, transparent:true, opacity:0,
+                                               side:THREE.DoubleSide, depthWrite:false,
+                                               blending:THREE.AdditiveBlending });
+  const arc = new THREE.Mesh(new THREE.RingGeometry(3.1, 3.24, 64), arcMat);
+  arc.rotation.x = -Math.PI/2; arc.position.y = 0.18; arc.renderOrder = 4; g.add(arc);
+
+  scene.add(g);
+  const gate = { st, mi, g, mats:[obMat, bandMat, arcMat], world:p.clone(), label:null, tangent:t.clone() };
+  gates.push(gate);
+  return gate;
+}
+
+/* ==========================================================================
+   7. MÉTÉO — chaque mois a son air
+   ========================================================================== */
+const WEATHER = {
+  poussiere:{ fall:0.35, lateral:0.55, size:1.3, rise:-1, op:0.24 },  // sept : poussière qui monte
+  feuilles :{ fall:1.25, lateral:1.35, size:1.9, rise: 1, op:0.22 },  // oct : dérive lourde
+  vent     :{ fall:0.65, lateral:3.30, size:1.0, rise: 1, op:0.20 },  // nov : vent d'acier
+  neige    :{ fall:1.70, lateral:0.85, size:2.3, rise: 1, op:0.32 },  // déc : neige
+};
+const PCOUNT = SMALL ? 1100 : 2200, SPREAD = 130, PHEIGHT = 52;
+const pgeo = new THREE.BufferGeometry();
+{
+  const P = new Float32Array(PCOUNT * 3), S = new Float32Array(PCOUNT);
+  for (let i = 0; i < PCOUNT; i++){
+    P[i*3  ] = Math.random() * 2 - 1;
+    P[i*3+1] = Math.random();
+    P[i*3+2] = Math.random() * 2 - 1;
+    S[i] = Math.random();
+  }
+  pgeo.setAttribute('position', new THREE.BufferAttribute(P, 3));
+  pgeo.setAttribute('aSeed',    new THREE.BufferAttribute(S, 1));
+}
+const pUni = {
+  uTime:{ value:0 }, uHead:{ value:new THREE.Vector3() },
+  uFall:{ value:.35 }, uLateral:{ value:.55 }, uSize:{ value:2 }, uRise:{ value:-1 },
+  uOpacity:{ value:0 }, uTint:{ value:AMB.tint.clone() },
+  uSpread:{ value:SPREAD }, uHeight:{ value:PHEIGHT }, uPR:{ value:1 },
+};
+const weather = new THREE.Points(pgeo, new THREE.ShaderMaterial({
+  uniforms:pUni, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+  vertexShader:/* glsl */`
+    attribute float aSeed;
+    uniform float uTime, uFall, uLateral, uSize, uRise, uSpread, uHeight, uPR;
+    uniform vec3 uHead;
+    varying float vA;
+    void main(){
+      float sd = aSeed;
+      vec3 w;
+      w.x = position.x * uSpread + uHead.x + sin(uTime * 0.21 + sd * 37.0) * uLateral * 7.0;
+      w.z = position.z * uSpread + uHead.z + cos(uTime * 0.17 + sd * 23.0) * uLateral * 3.0;
+      float t = fract(position.y - uTime * uFall * 0.013 * uRise + sd);
+      w.y = t * uHeight + 0.5;
+
+      // fondu en haut, en bas, et au loin
+      vA  = smoothstep(0.0, 0.14, t) * (1.0 - smoothstep(0.62, 1.0, t));
+      vA *= 1.0 - smoothstep(0.35, 1.0, length(w.xz - uHead.xz) / uSpread);
+
+      vec4 mv = modelViewMatrix * vec4(w, 1.0);
+      gl_PointSize = uSize * uPR * (260.0 / max(-mv.z, 1.0));
+      gl_Position  = projectionMatrix * mv;
+    }`,
+  fragmentShader:/* glsl */`
+    precision highp float;
+    uniform float uOpacity; uniform vec3 uTint;
+    varying float vA;
+    void main(){
+      float d = length(gl_PointCoord - 0.5);
+      float a = (1.0 - smoothstep(0.12, 0.5, d)) * vA * uOpacity;
+      if (a < 0.004) discard;
+      gl_FragColor = vec4(uTint, a);
+    }`,
+}));
+weather.frustumCulled = false; weather.renderOrder = 8; scene.add(weather);
+
+/* la nappe partage les uniformes de la route : une seule source de vérité */
+glowMat.uniforms.uProg = routeUni.uProg;
+glowMat.uniforms.uTime = routeUni.uTime;
+glowMat.uniforms.uTint = routeUni.uTint;
+glowMat.uniforms.uGold = routeUni.uGold;
+glowMat.uniforms.uGoldHi = routeUni.uGoldHi;
+
+/* ==========================================================================
+   8. INSTANCIATION DES STATIONS + ÉTIQUETTES HTML
+   ========================================================================== */
+const hud      = document.getElementById('hud');
+const leaders  = document.getElementById('leaders');
+const SVGNS    = 'http://www.w3.org/2000/svg';
+
+let flip = -1;
+STATIONS.forEach((st) => {
+  if (st.kind === 'gate'){ st.obj = buildGate(st, st.month); return; }
+  if (st.kind !== 'event') return;
+
+  flip *= -1;
+  const m = buildMarker(st, flip);
+
+  // étiquette ancrée en 3D, avec sa ligne de rappel
+  const el = document.createElement('div');
+  // étiquette à droite de l'ancre → filet à gauche, et inversement
+  el.className = 'lbl' + (flip < 0 ? ' right' : '');
+  el.innerHTML =
+    `<div class="d">${st.ev.d}</div>` +
+    `<div class="t">${st.ev.t}</div>` +
+    `<div class="rule"></div>` +
+    `<div class="s">${MONTHS[st.month].name}${st.ev.s ? ' · ' + st.ev.s : ''}</div>`;
+  hud.appendChild(el);
+
+  const ln = document.createElementNS(SVGNS, 'line');
+  const ci = document.createElementNS(SVGNS, 'circle');
+  ci.setAttribute('r', '3.5');
+  leaders.append(ln, ci);
+
+  st.ui = { el, ln, ci, marker:m, side:flip, w:0, h:0, onRight:flip > 0 };
+});
+
+/* --------- noms de mois gravés au sol (après chargement des fontes) ------- */
+function placeGroundLabels(){
+  gates.forEach((gt) => {
+    const mo = MONTHS[gt.mi];
+    const lab = groundLabel(mo.name.toUpperCase(), {
+      world: 34,
+      family: "Cinzel, Georgia, 'Times New Roman', serif",
+      color: '#' + new THREE.Color(mo.tint).getHexString(),
+    });
+    const t = gt.tangent;
+    lab.position.copy(gt.world).addScaledVector(t, 7);
+    lab.position.y = 0.13;
+    lab.rotation.y = Math.atan2(-t.x, -t.z);
+    scene.add(lab);
+    gt.label = lab;
+    lab.scale.setScalar(Math.min(1, Math.max(0.38, camera.aspect / 1.35)));
+  });
+}
+
+/* ==========================================================================
+   9. RÈGLE DE CAMPAGNE
+   ========================================================================== */
+const rail    = document.getElementById('rail');
+const railFill= rail.querySelector('.fill');
+const railCur = rail.querySelector('.cursor');
+const railTk  = rail.querySelector('.ticks');
+const railMo  = rail.querySelector('.months');
+MONTHS.forEach((mo, i) => {
+  const gu = STATIONS.find(s => s.kind === 'gate' && s.month === i).u;
+  const d = document.createElement('div');
+  d.className = 'mo';
+  d.dataset.full  = mo.name.toUpperCase();
+  d.dataset.short = mo.short.toUpperCase();
+  d.style.left = (gu * 100).toFixed(2) + '%';
+  railMo.appendChild(d);
+});
+const railMoEls = [...railMo.children];
+STATIONS.forEach(st => {
+  if (st.kind !== 'event') return;
+  const tk = document.createElement('i');
+  tk.className = 'tk'; tk.style.left = (st.u * 100) + '%';
+  railTk.appendChild(tk);
+  st.tick = tk;
+});
+
+/* ==========================================================================
+   10. SCROLL — la page ne défile pas, la caméra avance
+   ========================================================================== */
+gsap.registerPlugin(ScrollTrigger);
+document.getElementById('track').style.height = (N * 105) + 'vh';
+
+let lenis = null;
+if (!FLAT && !REDUCED && !AUDIT){
+  lenis = new Lenis({ duration:1.05, smoothWheel:true, wheelMultiplier:0.92, touchMultiplier:1.5 });
+  lenis.on('scroll', ScrollTrigger.update);
+}
+
+let targetP = 0, curP = 0;
+ScrollTrigger.create({
+  trigger:'#track', start:'top top', end:'bottom bottom',
+  onUpdate: self => { targetP = self.progress; },
+});
+if (FLAT){ targetP = curP = Math.min(1, Math.max(0, FLAT_AT)); }
+
+/* ==========================================================================
+   11. AMBIANCE PAR MOIS
+   ========================================================================== */
+const TINTS = MONTHS.map(m => new THREE.Color(m.tint));
+const FOGS  = MONTHS.map(m => new THREE.Color(m.fog));
+const WKEYS = MONTHS.map(m => WEATHER[m.weather]);
+const gateU = gates.map(g => g.st.u);
+
+const slam     = document.getElementById('slam');
+const slamM    = slam.querySelector('.m');
+const slamN    = slam.querySelector('.n');
+const slamBar  = slam.querySelector('.bar');
+let   slamTl   = null;
+
+function fireSlam(mi){
+  if (FLAT) return;
+  const mo = MONTHS[mi];
+  slamM.textContent = mo.name.toUpperCase();
+  slamN.textContent = mo.events.length + ' rendez-vous';
+  slam.style.setProperty('--tint', '#' + new THREE.Color(mo.tint).getHexString());
+  if (slamTl) slamTl.kill();
+  if (REDUCED){
+    gsap.set(slam, { opacity:1 }); gsap.set(slamBar, { width:180 });
+    slamTl = gsap.to(slam, { opacity:0, delay:1.1, duration:.3 });
+    return;
+  }
+  gsap.set(slam,    { opacity:1 });
+  gsap.set(slamM,   { scale:1.16, letterSpacing:'0.55em', opacity:0 });
+  gsap.set(slamN,   { opacity:0, y:14 });
+  gsap.set(slamBar, { width:0, opacity:.85 });
+  slamTl = gsap.timeline()
+    .to(slamM,   { scale:1, letterSpacing:'0.22em', opacity:1, duration:.62, ease:'expo.out' })
+    .to(slamN,   { opacity:1, y:0, duration:.45, ease:'power3.out' }, '-=.34')
+    .to(slamBar, { width:'min(260px,40vw)', duration:.7, ease:'expo.out' }, '-=.5')
+    .to(slam,    { opacity:0, duration:.42, ease:'power2.in' }, '+=.62');
+}
+
+/* ==========================================================================
+   12. CAMÉRA — elle avance, elle ne défile pas
+   ========================================================================== */
+const clamp01 = v => Math.min(1, Math.max(0, v));
+const lerp    = (a, b, t) => a + (b - a) * t;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+const routeBox    = new THREE.Box3().setFromPoints(ctrl);
+const routeCenter = routeBox.getCenter(new THREE.Vector3());
+const OVER_POS    = new THREE.Vector3(routeCenter.x + 18, 272, routeCenter.z + 228);
+const OVER_LOOK   = routeCenter.clone().setY(-8).setX(routeCenter.x - 42);
+const U_OUT_A     = STATIONS[N-2].u + (1 - STATIONS[N-2].u) * 0.22;
+const U_OUT_B     = 0.992;
+
+const _head = new THREE.Vector3(), _tan = new THREE.Vector3(), _t2 = new THREE.Vector3();
+const _pos  = new THREE.Vector3(), _look = new THREE.Vector3();
+const _op   = new THREE.Vector3(), _ol = new THREE.Vector3();
+let roll = 0;
+let FIT = 1;   // facteur de recul : compense les écrans étroits sans déformer
+
+function rig(u, time){
+  const uc = clamp01(u);
+  CURVE.getPointAt(uc, _head);
+  CURVE.getTangentAt(uc, _tan);
+
+  // on ouvre sur la route qui s'enfonce au loin, puis on bascule en vue de plan
+  const io = smoothstep(0, STATIONS[1].u * 0.9, uc);
+  const H = lerp(40, 29.5, io) * FIT, B = lerp(36, 25.5, io) * FIT, A = lerp(74, 27, io) * (0.45 + 0.55 * FIT);
+
+  _pos.copy(_head).addScaledVector(_tan, -B); _pos.y = _head.y + H;
+  _look.copy(_head).addScaledVector(_tan, A); _look.y = -1.5;
+
+  // clôture : on s'élève et la campagne entière apparaît
+  const fo = smoothstep(U_OUT_A, U_OUT_B, uc);
+  if (fo > 0){
+    const e = fo < .5 ? 4*fo*fo*fo : 1 - Math.pow(-2*fo + 2, 3) / 2;
+    _op.copy(OVER_POS);
+    _op.y *= FIT; _op.z = routeCenter.z + (OVER_POS.z - routeCenter.z) * FIT;
+    _pos.lerpVectors(_pos, _op, e);
+    _look.lerpVectors(_look, _ol.copy(OVER_LOOK), e);
+  }
+  if (!REDUCED && !FLAT){
+    _pos.x += Math.sin(time * 0.31) * 0.9 * (1 - fo);
+    _pos.y += Math.sin(time * 0.24 + 1.1) * 0.75 * (1 - fo);
+  }
+  camera.position.copy(_pos);
+  camera.lookAt(_look);
+
+  CURVE.getTangentAt(clamp01(uc + 0.007), _t2);
+  const turn = Math.atan2(_t2.x, -_t2.z) - Math.atan2(_tan.x, -_tan.z);
+  roll = lerp(roll, Math.max(-0.055, Math.min(0.055, turn * 1.5)) * (1 - fo), 0.06);
+  camera.rotateZ(roll);
+  return { fo, head:_head };
+}
+
+/* ==========================================================================
+   13. BOUCLE
+   ========================================================================== */
+const introEl = document.getElementById('intro');
+const outroEl = document.getElementById('outro');
+const _proj   = new THREE.Vector3();
+let lastHex = '', lastU = 0, slamGuard = -1;
+const warmUntil = performance.now() * 0.001 + 1.2;
+const _hsl = {}, _ink = new THREE.Color();
+let railW = rail.querySelector('.bar').getBoundingClientRect().width;
+
+function updateMonth(u, fo){
+  let mf = 0;
+  for (let i = 1; i < gateU.length; i++) mf += smoothstep(gateU[i] - 0.016, gateU[i] + 0.006, u);
+  const i0 = Math.min(MONTHS.length - 1, Math.floor(mf));
+  const i1 = Math.min(MONTHS.length - 1, i0 + 1);
+  const f  = mf - i0;
+
+  AMB.tint.copy(TINTS[i0]).lerp(TINTS[i1], f);
+  AMB.fog .copy(FOGS[i0]) .lerp(FOGS[i1],  f);
+  terrainUni.uTint.value.copy(AMB.tint);
+  terrainUni.uFog .value.copy(AMB.fog);
+  routeUni.uTint  .value.copy(AMB.tint);
+  pUni.uTint      .value.copy(AMB.tint);
+  sky.material.color.copy(AMB.fog);
+
+  const w0 = WKEYS[i0], w1 = WKEYS[i1];
+  const inCampaign = smoothstep(gateU[0] - 0.022, gateU[0] + 0.02, u);
+  pUni.uFall.value    = lerp(w0.fall, w1.fall, f);
+  pUni.uLateral.value = lerp(w0.lateral, w1.lateral, f);
+  pUni.uSize.value    = lerp(w0.size, w1.size, f);
+  pUni.uRise.value    = lerp(w0.rise, w1.rise, f);
+  pUni.uOpacity.value = lerp(w0.op, w1.op, f) * inCampaign * (1 - fo) * (REDUCED ? 0.35 : 1);
+
+  const hex = '#' + AMB.tint.getHexString();
+  if (hex !== lastHex){
+    const rs = document.documentElement.style;
+    rs.setProperty('--tint', hex);
+    // l'acier de novembre est trop sombre pour du corps 10 : on remonte sa clarté
+    AMB.tint.getHSL(_hsl);
+    _ink.setHSL(_hsl.h, Math.min(1, _hsl.s * 0.92), Math.max(0.70, _hsl.l));
+    rs.setProperty('--tint-ink', '#' + _ink.getHexString());
+    lastHex = hex;
+  }
+  return mf;
+}
+
+function updateLabels(u){
+  for (const st of STATIONS){
+    if (!st.ui) continue;
+    const { el, ln, ci, marker, side } = st.ui;
+    const d = st.u - u;
+
+    // étiquette : apparaît en approchant, s'efface une fois le jalon dépassé
+    const k = d > 0 ? 1 - smoothstep(0.011, 0.046, d)
+                    : 1 - smoothstep(0.005, 0.026, -d);
+    // jalon : se dresse en approchant, puis reste planté, atténué
+    const mk = d > 0 ? 1 - smoothstep(0.004, 0.062, d)
+                     : lerp(1, 0.48, smoothstep(0, 0.055, -d));
+
+    const ek = easeOut(clamp01(mk));
+    marker.riser.scale.y = Math.max(0.0001, ek);
+    marker.mats[0].opacity = ek * 0.95;
+    marker.mats[1].opacity = ek;
+    marker.mats[2].opacity = ek * 0.55;
+    marker.mats[3].opacity = ek * 0.5;
+    marker.halo.position.y = 10 * ek;
+    marker.ring.scale.setScalar(lerp(1.5, 1, ek));
+
+    if (k <= 0.002){
+      if (el.style.opacity !== '0'){ el.style.opacity = '0'; ln.style.opacity = '0'; ci.style.opacity = '0'; }
+      continue;
+    }
+    _proj.copy(marker.world); _proj.y = 10.6;
+    _proj.project(camera);
+    if (_proj.z > 1){ el.style.opacity = '0'; ln.style.opacity = '0'; ci.style.opacity = '0'; continue; }
+
+    const ax = (_proj.x * 0.5 + 0.5) * innerWidth;
+    const ay = (-_proj.y * 0.5 + 0.5) * innerHeight;
+    const w = st.ui.w, h = st.ui.h;
+    const GAP = innerWidth < 760 ? 26 : 52;
+    const M = 16, BOT = 74;              // marges : bords d'écran et règle du bas
+
+    // côté préféré, puis bascule si ça sort de l'écran, puis bornage
+    let lx = side > 0 ? ax + GAP : ax - GAP - w;
+    if (side < 0 && lx < M)                     lx = ax + GAP;
+    else if (side > 0 && lx + w > innerWidth - M) lx = ax - GAP - w;
+    lx = Math.max(M, Math.min(innerWidth - M - w, lx));
+    const ly = Math.max(M, Math.min(innerHeight - BOT - h, ay - h * 0.5));
+
+    const onRight = lx + w * 0.5 > ax;
+    if (st.ui.onRight !== onRight){
+      st.ui.onRight = onRight;
+      el.classList.toggle('right', !onRight);
+    }
+
+    // Pas de volet sur le texte : il est piloté par la position de scroll, donc
+    // un arrêt en pleine approche figerait un mot coupé. Le titre est entier ou
+    // il n'est pas là. Seul le filet décoratif se dessine, là c'est lisible.
+    const ek2 = easeOut(clamp01(k));
+    const slide = (1 - ek2) * 20 * (onRight ? -1 : 1);
+    el.style.opacity   = ek2;
+    el.style.transform = `translate3d(${(lx + slide).toFixed(1)}px, ${ly.toFixed(1)}px, 0)`;
+    el.style.setProperty('--rv', ek2.toFixed(3));
+
+    const ex = onRight ? lx : lx + w;
+    ln.setAttribute('x1', ax); ln.setAttribute('y1', ay);
+    ln.setAttribute('x2', lerp(ax, ex, ek2)); ln.setAttribute('y2', lerp(ay, ly + h * 0.5, ek2));
+    ln.style.opacity = ek2 * 0.6;
+    ci.setAttribute('cx', ax); ci.setAttribute('cy', ay);
+    ci.style.opacity = ek2 * 0.8;
+  }
+}
+
+// Un nom gravé au sol plus large que le cadre ne donne que des fragments
+// (« V E M » au lieu de NOVEMBRE). On projette ses deux extrémités : tant
+// qu'elles ne tiennent pas toutes les deux dans l'image, on ne l'affiche pas.
+// Une distance seuil ne suffirait pas : le cadre dépend de l'écran et du recul.
+const _e1 = new THREE.Vector3(), _e2 = new THREE.Vector3();
+function margeEcran(lab){
+  const half = lab.userData.halfWidth * lab.scale.x;
+  _e1.set(-half, 0, 0).applyQuaternion(lab.quaternion).add(lab.position).project(camera);
+  _e2.set( half, 0, 0).applyQuaternion(lab.quaternion).add(lab.position).project(camera);
+  if (_e1.z > 1 || _e2.z > 1) return Infinity;
+  return Math.max(Math.abs(_e1.x), Math.abs(_e2.x));
+}
+function lisible(lab){
+  const m = margeEcran(lab);
+  if (!isFinite(m)) return 0;
+  // seuil serré : la vignette assombrit fortement les bords, un mot qui touche
+  // le tiers extérieur de l'image y perd ses dernières lettres.
+  return 1 - smoothstep(0.62, 0.84, m);
+}
+
+function updateGates(u){
+  for (const gt of gates){
+    const d  = gt.st.u - u;
+    const gk = d > 0 ? 1 - smoothstep(0.004, 0.052, d)
+                     : lerp(1, 0.42, smoothstep(0, 0.07, -d));
+    const e = easeOut(clamp01(gk));
+    setOp(gt.mats[0], e * 0.95);
+    setOp(gt.mats[1], e * 0.55);
+    setOp(gt.mats[2], e * 0.30);
+    if (gt.label) gt.label.material.opacity = e * gt.label.userData.maxAlpha * lisible(gt.label);
+  }
+}
+
+function measureLabels(){
+  for (const st of STATIONS){
+    if (!st.ui) continue;
+    st.ui.w = st.ui.el.offsetWidth;
+    st.ui.h = st.ui.el.offsetHeight;
+  }
+}
+
+function updateRail(u){
+  railFill.style.transform = `scaleX(${u.toFixed(4)})`;
+  railCur.style.transform  = `translate3d(${(u * railW).toFixed(1)}px,0,0) rotate(45deg)`;
+  for (let i = 0; i < railMoEls.length; i++) railMoEls[i].classList.toggle('on', u >= gateU[i] - 0.004);
+  for (const st of STATIONS) if (st.tick) st.tick.classList.toggle('on', u >= st.u);
+}
+
+/* franchissement d'un portique : la bascule de mois se déclenche dans les deux sens */
+function checkGates(u, t){
+  // au chargement, le navigateur peut restaurer un scroll avancé : on laisse
+  // la position se stabiliser avant d'autoriser la moindre bascule de mois.
+  if (t < warmUntil){ lastU = u; return; }
+  for (let i = 0; i < gateU.length; i++){
+    const gu = gateU[i];
+    const crossed = (lastU < gu && u >= gu) || (lastU > gu && u <= gu);
+    if (!crossed) continue;
+    if (slamGuard !== i){ slamGuard = i; fireSlam(gates[i].mi); }
+  }
+  // on relâche le verrou dès qu'on s'est éloigné du portique
+  if (slamGuard >= 0 && Math.abs(u - gateU[slamGuard]) > 0.022) slamGuard = -1;
+  lastU = u;
+}
+
+/* ==========================================================================
+   14. RAF
+   ========================================================================== */
+let prev = performance.now() * 0.001, fpsAcc = 0, fpsN = 0, fpsClock = 0;
+const benchT0 = prev + 1.5;      // on laisse la scène se mettre en place
+let benchN = 0, benchStart = 0, benchDone = false;
+
+
+function tick(now){
+  requestAnimationFrame(tick);
+  const t  = now * 0.001;
+  const dt = Math.min(0.05, Math.max(0.0005, t - prev));
+  prev = t;
+  if (lenis) lenis.raf(now);
+
+  // lissage : le monde suit le scroll avec un léger retard, ça donne du poids
+  if (BENCH) targetP = Math.min(1, (t - benchT0) / 14);
+  // en mouvement réduit, la caméra colle au scroll : plus d'inertie après l'arrêt
+  curP += (targetP - curP) * Math.min(1, dt * (FLAT ? 60 : REDUCED ? 26 : 7.5));
+  const u = clamp01(curP);
+
+  const { fo, head } = rig(u, t);
+  const mf = updateMonth(u, fo);
+  glowMat.uniforms.uWide.value = lerp(1, 0.70, fo);
+
+  terrainUni.uHead.value.copy(head);
+  terrainUni.uTime.value = t;
+  terrainUni.uFogNear.value = lerp(70, 250, fo);
+  terrainUni.uFogFar.value  = lerp(345, 1050, fo);
+  pUni.uHead.value.copy(head);
+  pUni.uTime.value = t;
+  pUni.uPR.value   = renderer.getPixelRatio();
+  routeUni.uProg.value = u;
+  routeUni.uTime.value = t;
+
+  updateLabels(u);
+  updateGates(u);
+  updateRail(u);
+  checkGates(u, t);
+
+  for (const m of markers) m.crown.rotation.y += dt * 0.55;
+
+  // ouverture / clôture
+  const ik = 1 - smoothstep(0.004, 0.032, u);
+  introEl.style.opacity   = ik;
+  introEl.style.transform = `translate(-50%,calc(-50% - ${((1 - ik) * 46).toFixed(1)}px))`;
+  const ok = smoothstep(0.958, 0.996, u);
+  outroEl.style.opacity   = ok;
+  outroEl.style.transform = `translate(-50%,calc(-50% + ${((1 - ok) * 40).toFixed(1)}px))`;
+
+  renderer.render(scene, camera);
+
+  if (BENCH && !benchDone && t > benchT0){
+    if (!benchStart) benchStart = t;
+    benchN++;
+    if (t - benchStart > 12){
+      benchDone = true;
+      const fps = (benchN - 1) / (t - benchStart);
+      document.title = `BENCH fps=${fps.toFixed(1)} dpr=${renderer.getPixelRatio()}` +
+        ` tris=${renderer.info.render.triangles} calls=${renderer.info.render.calls}` +
+        ` small=${SMALL}`;
+    }
+  }
+
+  // Veille de performance. Un onglet masqué (ou un panneau d'aperçu en veille)
+  // bride le rAF : sans ce filtre on prendrait ce ralenti pour un manque de
+  // puissance et on dégraderait la netteté définitivement, pour rien.
+  if (dt < 0.045 && document.visibilityState === 'visible'){
+    fpsAcc += 1 / dt; fpsN++; fpsClock += dt;
+  }
+  if (fpsClock > 2.4 && fpsN > 60){
+    const avg = fpsAcc / fpsN;
+    if (avg < 44 && dprIdx < DPR_TIERS.length - 1){
+      dprIdx++; applyDPR(); renderer.setSize(innerWidth, innerHeight);
+    }
+    fpsAcc = 0; fpsN = 0; fpsClock = 0;
+  }
+}
+
+/* ==========================================================================
+   15. REDIMENSIONNEMENT
+   ========================================================================== */
+function onResize(){
+  const w = innerWidth, h = innerHeight;
+  camera.aspect = w / h;
+  camera.fov = 46;
+  camera.updateProjectionMatrix();
+  // un écran étroit ne voit presque rien de la route : on recule la caméra
+  // plutôt que d'ouvrir l'objectif, qui déformerait le relief.
+  FIT = Math.min(2.05, Math.max(1, 1.16 / Math.max(camera.aspect, 0.44)));
+  // en portrait, le nom du mois gravé au sol est réduit pour tenir dans le cadre
+  const gs = Math.min(1, Math.max(0.38, camera.aspect / 1.35));
+  for (const gt of gates) if (gt.label) gt.label.scale.setScalar(gs);
+  renderer.setSize(w, h);
+  leaders.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  railW = rail.querySelector('.bar').getBoundingClientRect().width;
+  const court = w < 900;
+  for (const el of railMoEls) el.textContent = court ? el.dataset.short : el.dataset.full;
+  measureLabels();
+  ScrollTrigger.refresh();
+}
+addEventListener('resize', onResize);
+document.addEventListener('visibilitychange', () => { fpsAcc = 0; fpsN = 0; fpsClock = 0; prev = performance.now() * 0.001; });
+onResize();
+
+/* ==========================================================================
+   16. AMORÇAGE — jamais bloqué derrière le préchargement
+   ========================================================================== */
+const boot = document.getElementById('boot');
+let started = false;
+
+function start(){
+  if (started) return;
+  started = true;
+  boot.classList.add('gone');
+  setTimeout(() => boot.remove(), 800);
+
+  if (REDUCED || FLAT){
+    gsap.set('#intro .eyebrow, #intro .sub, #intro .hint, #rail, #intro .yr', { opacity:1 });
+    gsap.set('#intro h1 .ln i', { y:0 });
+    return;
+  }
+  gsap.timeline({ delay:.12 })
+    .to('#intro h1 .ln i', { y:0, duration:1.15, ease:'expo.out', stagger:.10 })
+    .to('#intro .yr',      { opacity:1, duration:.9, ease:'power2.out' }, '-=.72')
+    .to('#intro .eyebrow', { opacity:1, duration:.8, ease:'power2.out' }, '-=.95')
+    .to('#intro .sub',     { opacity:1, duration:.9, ease:'power2.out' }, '-=.6')
+    .to('#intro .hint',    { opacity:1, duration:.8, ease:'power2.out' }, '-=.45')
+    .to('#rail',           { opacity:1, duration:.9, ease:'power2.out' }, '-=.6');
+
+  gsap.to('#intro .hint b', { scaleY:.25, duration:1.15, ease:'power2.inOut',
+                              repeat:-1, yoyo:true, transformOrigin:'top' });
+}
+
+gsap.to('#boot .r i', { width:'100%', duration:1.15, ease:'power2.inOut' });
+
+// document.fonts.ready ne garantit PAS qu'une police soit utilisable par un
+// canvas : sans ce load explicite, le tracé part sur la police de repli, bien
+// plus large, et les noms de mois sortent coupés de leur propre texture.
+Promise.race([
+  (document.fonts
+    ? document.fonts.load("600 190px Cinzel").then(() => document.fonts.ready)
+    : Promise.resolve()).catch(() => {}),
+  new Promise(r => setTimeout(r, 2600)),
+]).then(() => {
+  placeGroundLabels();
+  measureLabels();
+  setTimeout(start, 240);
+});
+setTimeout(start, 4200);                            // filet de sécurité absolu
+if (AUDIT) setTimeout(() => {
+  const r = balayage();
+  document.title = `AUDIT w=${r.largeur} problemes=${r.problemes} pireSol=${r.pireSol}` +
+                   ` margeEtiqMin=${r.margeEtiqMin}px ${r.exemples.join(' ')}`;
+}, 3200);
+setTimeout(() => {                                  // on ne reste jamais caché
+  gsap.set('#intro .eyebrow, #intro .sub, #intro .hint, #rail, #intro .yr', { opacity:1 });
+  gsap.set('#intro h1 .ln i', { y:0 });
+}, 6500);
+
+/* Balayage de contrôle : parcourt toute la route et cherche le moindre texte
+   coupé. Synchrone, donc insensible au bridage du rAF quand la fenêtre dort. */
+function balayage(pas = 0.0045){
+  const soucis = []; let pireSol = 0, margeMin = Infinity;
+  for (let u = 0; u <= 1.0001; u += pas){
+    const uu = Math.min(1, u);
+    rig(uu, 0);
+    camera.updateMatrixWorld(true);
+    camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+    updateMonth(uu, smoothstep(U_OUT_A, U_OUT_B, uu));
+    updateLabels(uu);
+    updateGates(uu);
+
+    for (const gt of gates){
+      const lab = gt.label;
+      if (!lab || lab.material.opacity <= 0.05) continue;
+      const mt = margeEcran(lab) * lab.userData.textRatio;
+      if (!isFinite(mt)) continue;
+      if (mt > pireSol) pireSol = mt;
+      if (mt > 0.90) soucis.push(`sol:${MONTHS[gt.mi].short}@${uu.toFixed(3)}=${mt.toFixed(2)}`);
+    }
+    for (const st of STATIONS){
+      if (!st.ui) continue;
+      const el = st.ui.el;
+      if (parseFloat(el.style.opacity || '0') <= 0.05) continue;
+      if (el.scrollWidth > el.clientWidth + 1) soucis.push(`deborde:${st.ev.t}@${uu.toFixed(3)}`);
+      const r = el.getBoundingClientRect();
+      if (r.left < -1 || r.right > innerWidth + 1) soucis.push(`horsCadre:${st.ev.t}@${uu.toFixed(3)}`);
+      margeMin = Math.min(margeMin, r.left, innerWidth - r.right);
+    }
+  }
+  return { largeur: innerWidth, problemes: soucis.length, pireSol: +pireSol.toFixed(2),
+           margeEtiqMin: Math.round(margeMin), exemples: soucis.slice(0, 5) };
+}
+
+// point d'accès de contrôle qualité (aucun effet sur le rendu)
+window.__roadmap = {
+  get lenis(){ return lenis; },
+  stations: STATIONS, gates, markers, curve: CURVE, camera, renderer,
+  goto(u){ const h = document.documentElement.scrollHeight - innerHeight;
+           const y = Math.max(0, Math.min(1, u)) * h;
+           if (lenis) lenis.scrollTo(y, { immediate:true }); else scrollTo(0, y); },
+  slam: fireSlam,
+  balayage,
+};
+
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
