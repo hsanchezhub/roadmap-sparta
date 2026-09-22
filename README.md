@@ -57,13 +57,32 @@ Contrôlé sans aucun texte coupé sur huit largeurs, de 320 à 1920 px.
 (148 k triangles, 15 appels de rendu) et téléphone 390x844 @3x (54 k triangles,
 profil allégé automatique, netteté 1,9).
 
+## En ligne
+
+Publié sur GitHub Pages : **https://hsanchezhub.github.io/roadmap-sparta/**
+Dépôt public : https://github.com/hsanchezhub/roadmap-sparta
+
+Le déploiement est automatique : tout envoi sur `main` déclenche le workflow
+`.github/workflows/pages.yml`, qui publie le contenu de `site/`. Rien d'autre à
+faire qu'un `git push`.
+
+```bash
+git add -A && git commit -m "..." && git push
+```
+
+Deux points à savoir si ça doit être refait ailleurs :
+
+- Pages doit être activé **une fois à la main** dans Settings, Pages, Source :
+  GitHub Actions. Le jeton automatique des Actions n'a pas le droit de créer le
+  service lui-même, le workflow échoue tant que ce n'est pas fait.
+- Le dépôt est **public**, donc la roadmap l'est aussi pour qui connaît
+  l'adresse. Le `meta robots noindex` évite le référencement, sans rendre la page
+  privée pour autant. Pages depuis un dépôt privé demanderait GitHub Pro.
+
+Tous les chemins du site sont relatifs, il fonctionne donc aussi bien à la racine
+d'un domaine que dans un sous-dossier comme ici.
+
 ## Livraison
 
 Tout est embarqué : three.js, GSAP, ScrollTrigger, Lenis et les 24 woff2 sont
 dans `site/vendor/`. Aucune requête externe, le site tient sans réseau.
-
-Déploiement, depuis le dossier du site et jamais depuis le Bureau :
-
-```bash
-npx -y netlify-cli@latest deploy --prod --dir "site" --site <siteId>
-```
